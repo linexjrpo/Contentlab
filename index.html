@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ContentLab v3.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5f2;--bg2:#f0ede8;--white:#fff;--card:#fffefb;
+  --lila2:#7c3aed;--lilag:rgba(124,58,237,0.1);--lilabg:#f5f3ff;--lilabrd:rgba(124,58,237,0.15);
+  --mint2:#059669;--mintbg:#f0fdf8;--mintbrd:rgba(5,150,105,0.15);
+  --peach2:#dc2626;--peachbg:#fff5f5;--peachbrd:rgba(220,38,38,0.12);
+  --sand2:#d97706;--sandbg:#fffbeb;--sandg:rgba(253,230,138,0.25);
+  --tx:#1c1917;--t2:#57534e;--t3:#a8a29e;
+  --brd:rgba(28,25,23,0.08);--brd2:rgba(28,25,23,0.14);--brd3:rgba(28,25,23,0.2);
+  --sh:0 2px 12px rgba(0,0,0,0.07);--sh2:0 4px 20px rgba(0,0,0,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(28,25,23,0.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--lila2);border-radius:2px}
+.app{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:1.25rem 1rem 4rem}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--brd);border-radius:20px;padding:.9rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--sh);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:19px;letter-spacing:-.03em}
+.brand-name em{color:var(--lila2);font-style:italic}
+.brand-v{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--lilabg);color:var(--lila2);border:1px solid var(--lilabrd);letter-spacing:.05em;margin-left:4px}
+.lang-sw{display:flex;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;overflow:hidden}
+.lbtn{padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .18s}
+.lbtn.on{background:var(--lila2);color:#fff}
+
+/* MODES */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.mode-card{background:var(--white);border:1.5px solid var(--brd);border-radius:16px;padding:1rem 1.25rem;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}
+.mode-card:hover{border-color:var(--lila2);box-shadow:var(--sh2);transform:translateY(-1px)}
+.mode-card.on{border-color:var(--lila2);background:var(--lilabg)}
+.mode-icon{font-size:20px;margin-bottom:6px}
+.mode-title{font-family:'Fraunces',serif;font-size:13px;font-weight:600;margin-bottom:2px}
+.mode-card.on .mode-title{color:var(--lila2)}
+.mode-desc{font-size:11px;color:var(--t3)}
+
+/* PANELS */
+.panel{background:var(--white);border:1px solid var(--brd);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:var(--sh)}
+.phd{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:1rem}
+.sp{width:22px;height:22px;border-radius:50%;background:var(--lilabg);border:1px solid var(--lilabrd);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--lila2);font-weight:700;flex-shrink:0}
+
+/* INPUTS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fl{display:flex;flex-direction:column;gap:5px}
+.lbl{font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+select,input[type=text],textarea{width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:10px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--tx);outline:none;transition:border-color .2s,box-shadow .2s;resize:none;-webkit-appearance:none}
+select:focus,input:focus,textarea:focus{border-color:var(--lila2);background:var(--white);box-shadow:0 0 0 3px var(--lilag)}
+::placeholder{color:var(--t3)}
+select option{background:var(--white)}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--brd2);background:var(--bg2);color:var(--t2);transition:all .15s;user-select:none;white-space:nowrap}
+.chip:hover{border-color:var(--lila2);color:var(--lila2);background:var(--lilabg)}
+.chip.c-lila{background:var(--lilabg);border-color:var(--lilabrd);color:var(--lila2)}
+.chip.c-mint{background:var(--mintbg);border-color:var(--mintbrd);color:var(--mint2)}
+.chip.c-peach{background:var(--peachbg);border-color:var(--peachbrd);color:var(--peach2)}
+.chip.c-sand{background:var(--sandbg);border-color:rgba(217,119,6,.2);color:var(--sand2)}
+.chip.c-sky{background:#eff6ff;border-color:rgba(29,78,216,.15);color:#1d4ed8}
+.add-row{display:flex;gap:8px;margin-top:6px}
+.add-row input{flex:1}
+.btn-plus{padding:0 14px;background:var(--bg2);border:1px solid var(--brd2);border-radius:10px;color:var(--lila2);font-size:20px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.btn-plus:hover{background:var(--lilabg);border-color:var(--lilabrd)}
+
+/* OBJECTIVES */
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.obj-btn{padding:9px 12px;background:var(--bg);border:1.5px solid var(--brd);border-radius:10px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .18s;text-align:left;display:flex;align-items:flex-start;gap:7px}
+.obj-btn:hover{border-color:var(--lila2);background:var(--lilabg)}
+.obj-btn.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+.oi{font-size:15px;flex-shrink:0;margin-top:1px}
+.obj-tt{display:flex;flex-direction:column;gap:2px}
+.obj-t{font-weight:600;font-size:12px}
+.obj-s{font-size:10px;opacity:.7}
+
+/* SERIES COUNT */
+.scnt{display:flex;gap:10px}
+.sc{flex:1;padding:10px;background:var(--bg);border:1.5px solid var(--brd);border-radius:10px;font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .18s;text-align:center}
+.sc:hover{border-color:var(--lila2);color:var(--lila2)}
+.sc.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+.sc-s{font-size:10px;display:block;font-family:'DM Sans',sans-serif;font-weight:400;opacity:.7;margin-top:2px}
+
+/* STYLE PRESETS */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.sp-card{padding:10px 13px;background:var(--bg);border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;transition:all .18s;position:relative}
+.sp-card:hover{border-color:var(--lila2);background:var(--lilabg)}
+.sp-card.on{background:var(--lilabg);border-color:var(--lila2)}
+.sp-title{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.sp-card.on .sp-title{color:var(--lila2)}
+.sp-desc{font-size:11px;color:var(--t3);line-height:1.4}
+.sp-badge{position:absolute;top:7px;right:7px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--lila2);color:#fff;letter-spacing:.04em;text-transform:uppercase;display:none}
+.sp-card.on .sp-badge{display:block}
+
+/* CLONE */
+.clone-toggle{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--sandg);border:1.5px solid rgba(217,119,6,.2);border-radius:10px;cursor:pointer;margin-bottom:8px}
+.clone-toggle input[type=checkbox]{width:15px;height:15px;accent-color:var(--sand2);flex-shrink:0}
+.ct-lbl{font-size:13px;font-weight:600;color:var(--sand2)}
+.ct-sub{font-size:11px;color:var(--t3);margin-top:1px}
+
+/* TONE */
+.tone-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.tone-end{font-size:11px;color:var(--t2);min-width:60px;white-space:nowrap}
+.tone-end.r{text-align:right}
+input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:linear-gradient(90deg,#059669,#7c3aed,#dc2626);border-radius:2px;border:none;padding:0;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--white);border:3px solid var(--lila2);cursor:pointer;box-shadow:var(--sh);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+.tone-val{text-align:center;font-size:12px;font-weight:600;color:var(--lila2);margin-top:5px}
+
+/* LINKEDIN */
+.li-row{display:flex;gap:8px;align-items:center;margin-top:1rem}
+.li-badge{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#e8f0fe;border:1.5px solid rgba(10,102,194,.2);border-radius:10px;font-size:12px;font-weight:600;color:#0a66c2;flex-shrink:0}
+
+/* GENERATE BTN */
+.btn-gen{width:100%;padding:15px;background:linear-gradient(135deg,var(--lila2),#9333ea);border:none;border-radius:14px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(124,58,237,.25);margin-top:1.25rem}
+.btn-gen:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.35)}
+.btn-gen:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* LOADER */
+.loader{display:none;text-align:center;padding:2.5rem 1.5rem}
+.loader.show{display:block}
+.ld-spin{width:44px;height:44px;border:3px solid var(--brd2);border-top-color:var(--lila2);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.25rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-pills{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:.75rem}
+.ld-pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--bg2);border:1px solid var(--brd);color:var(--t3);transition:all .3s}
+.ld-pill.active{background:var(--lilabg);border-color:var(--lilabrd);color:var(--lila2)}
+.ld-pill.done{background:var(--mintbg);border-color:var(--mintbrd);color:var(--mint2)}
+.ld-txt{font-size:13px;color:var(--t2)}
+
+/* ERROR */
+.err{background:var(--peachbg);border:1px solid var(--peachbrd);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--peach2);display:none;margin-bottom:1rem}
+.err.show{display:block}
+
+/* OUTPUT */
+#output{display:none}
+#output.show{display:block}
+.out-hdr{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--brd);border-radius:20px;padding:.9rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--sh);flex-wrap:wrap;gap:8px}
+.out-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700}
+.out-title em{color:var(--lila2);font-style:italic}
+.out-acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sm{padding:6px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--brd2);background:transparent;color:var(--t2)}
+.btn-sm:hover{border-color:var(--lila2);color:var(--lila2);background:var(--lilabg)}
+.btn-li{background:#0a66c2;border:none;color:#fff}
+.btn-li:hover{background:#0958a8;color:#fff;border:none;transform:translateY(-1px)}
+.btn-prev{background:linear-gradient(135deg,var(--lila2),#9333ea);border:none;color:#fff}
+.btn-prev:hover{transform:translateY(-1px);color:#fff;border:none}
+
+/* OUTPUT TABS */
+.out-tabs{display:flex;gap:6px;margin-bottom:1.25rem;overflow-x:auto;padding-bottom:2px}
+.out-tab{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;background:var(--white);border:1.5px solid var(--brd);color:var(--t2);white-space:nowrap;flex-shrink:0;box-shadow:var(--sh)}
+.out-tab:hover{border-color:var(--lila2);color:var(--lila2)}
+.out-tab.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+
+/* SECTION LABEL */
+.sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd)}
+
+/* ARTICLE */
+.art-card{background:var(--card);border:1px solid var(--brd2);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;box-shadow:var(--sh)}
+.art-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--lila2),var(--mint2),var(--peach2))}
+.art-body{font-size:14px;line-height:1.9;white-space:pre-wrap;color:var(--tx)}
+.art-footer{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--brd);flex-wrap:wrap;gap:8px}
+.wc{font-size:11px;color:var(--t3)}
+.copy-btn{padding:6px 13px;background:var(--bg2);border:1.5px solid var(--brd2);border-radius:8px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px}
+.copy-btn:hover{color:var(--mint2);border-color:var(--mintbrd);background:var(--mintbg)}
+
+/* KEYWORDS */
+.kw-row{display:flex;flex-wrap:wrap;gap:7px}
+.kw{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--lilabg);border:1px solid var(--lilabrd);color:var(--lila2)}
+.ht{padding:5px 12px;border-radius:20px;font-size:12px;background:var(--bg2);border:1px solid var(--brd2);color:var(--t2)}
+
+/* CAROUSEL */
+.slides-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.slide{min-width:190px;border-radius:14px;padding:1.2rem;scroll-snap-align:start;flex-shrink:0;border:1px solid var(--brd);box-shadow:var(--sh)}
+.sl-n{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.sl-t{font-family:'Fraunces',serif;font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.35}
+.sl-b{font-size:12px;line-height:1.6;color:var(--t2)}
+.slide:nth-child(1){background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:var(--lilabrd)}.slide:nth-child(1) .sl-t{color:var(--lila2)}
+.slide:nth-child(2){background:var(--mintbg);border-color:var(--mintbrd)}.slide:nth-child(2) .sl-t{color:var(--mint2)}
+.slide:nth-child(3){background:var(--sandbg);border-color:rgba(217,119,6,.15)}.slide:nth-child(3) .sl-t{color:var(--sand2)}
+.slide:nth-child(4){background:var(--mintbg);border-color:var(--mintbrd)}.slide:nth-child(4) .sl-t{color:var(--mint2)}
+.slide:nth-child(5){background:var(--peachbg);border-color:var(--peachbrd)}.slide:nth-child(5) .sl-t{color:var(--peach2)}
+.slide:nth-child(6){background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:var(--lilabrd)}.slide:nth-child(6) .sl-t{color:var(--lila2)}
+
+/* VISUAL / CONNECTION */
+.vis-box{background:var(--bg2);border:1.5px dashed var(--brd3);border-radius:12px;padding:1rem 1.25rem;font-size:13px;line-height:1.7;color:var(--t2)}
+.conn-bar{background:var(--white);border-left:3px solid var(--lila2);border-radius:0 12px 12px 0;padding:1rem 1.25rem;font-size:13px;line-height:1.75;color:var(--t2);box-shadow:var(--sh);margin-bottom:1rem}
+.fut{background:var(--white);border:1px solid var(--brd);border-radius:12px;padding:.85rem 1rem;margin-bottom:8px;font-size:13px;line-height:1.6;color:var(--t2);display:flex;gap:10px;transition:all .15s;box-shadow:var(--sh)}
+.fut:hover{border-color:var(--lila2)}
+
+/* SERIES */
+.cal-wrap{background:var(--white);border:1px solid var(--brd);border-radius:14px;padding:1.25rem;box-shadow:var(--sh)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-hd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);text-align:center;padding:5px 0}
+.cal-day{aspect-ratio:1;border-radius:10px;border:1px solid var(--brd);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px;transition:all .18s;min-height:46px}
+.cal-day.today{border-color:var(--lila2);background:var(--lilabg)}
+.cal-day.has-post{border-color:var(--lila2);background:var(--lilabg);cursor:pointer}
+.cal-day.has-post:hover{transform:scale(1.05);box-shadow:var(--sh2)}
+.cal-day.opt{border-color:var(--mintbrd);background:var(--mintbg)}
+.cal-num{font-family:'Fraunces',serif;font-size:12px;font-weight:600;color:var(--t2)}
+.cal-day.today .cal-num,.cal-day.has-post .cal-num{color:var(--lila2);font-weight:700}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--lila2);margin-top:2px}
+.cal-tag{font-size:9px;color:var(--lila2);font-weight:700;text-align:center;line-height:1.2;margin-top:2px}
+.cal-leg{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.leg-dot{width:9px;height:9px;border-radius:50%}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid #e5e5e5;position:sticky;top:0;background:#fff;border-radius:20px 20px 0 0;z-index:1}
+.modal-title{font-family:'Fraunces',serif;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-x{width:28px;height:28px;background:#f5f5f4;border:none;border-radius:50%;cursor:pointer;font-size:14px;color:#78716c;display:flex;align-items:center;justify-content:center}
+.modal-x:hover{background:#fee2e2;color:#dc2626}
+.modal-body{padding:1.25rem 1.5rem}
+.li-card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;font-family:-apple-system,system-ui,sans-serif;overflow:hidden}
+.li-hd{display:flex;align-items:flex-start;gap:10px;padding:12px 16px 8px}
+.li-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#c4b5fd,#6ee7b7);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0;font-family:'Fraunces',serif}
+.li-nm{font-size:14px;font-weight:600;color:#000;line-height:1.3}
+.li-hl{font-size:12px;color:#666;margin-top:1px}
+.li-tm{font-size:11px;color:#999;margin-top:2px}
+.li-body{padding:4px 16px 12px;font-size:14px;line-height:1.65;color:#1a1a1a;white-space:pre-wrap}
+.li-tags{padding:0 16px 12px;display:flex;flex-wrap:wrap;gap:4px}
+.li-tag{font-size:13px;color:#0a66c2}
+.li-eng{padding:8px 16px;border-top:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#666}
+.li-acts{display:flex;border-top:1px solid #e0e0e0}
+.li-act{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#666}
+.li-act:hover{background:#f0f0f0}
+.prev-note{margin-top:1rem;padding:10px 14px;background:#fffbeb;border:1px solid rgba(217,119,6,.2);border-radius:10px;font-size:12px;color:#d97706;line-height:1.5}
+
+@media(max-width:600px){.g2,.modes,.obj-grid,.style-grid{grid-template-columns:1fr}.out-hdr{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="hdr">
+  <div class="brand">
+    <div class="brand-mark">✦</div>
+    <div style="display:flex;align-items:baseline;gap:8px">
+      <span class="brand-name">Content<em>Lab</em></span>
+      <span class="brand-v">v3.0</span>
+    </div>
+  </div>
+  <div class="lang-sw">
+    <button class="lbtn on" id="btn-pt" onclick="setLang('pt')">PT</button>
+    <button class="lbtn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<div id="form-wrap">
+
+  <!-- MODES -->
+  <div class="modes">
+    <div class="mode-card on" onclick="setMode('single',this)">
+      <div class="mode-icon">✦</div>
+      <div class="mode-title" data-pt="Post único" data-en="Single post">Post único</div>
+      <div class="mode-desc" data-pt="1 artigo + carrossel" data-en="1 article + carousel">1 artigo + carrossel</div>
+    </div>
+    <div class="mode-card" onclick="setMode('series',this)">
+      <div class="mode-icon">🗓</div>
+      <div class="mode-title" data-pt="Série de conteúdo" data-en="Content series">Série de conteúdo</div>
+      <div class="mode-desc" data-pt="4 ou 8 posts conectados" data-en="4 or 8 connected posts">4 ou 8 posts</div>
+    </div>
+    <div class="mode-card" onclick="setMode('calendar',this)">
+      <div class="mode-icon">📅</div>
+      <div class="mode-title" data-pt="Calendário editorial" data-en="Editorial calendar">Calendário</div>
+      <div class="mode-desc" data-pt="Plano visual do mês" data-en="Visual monthly plan">Plano do mês</div>
+    </div>
+  </div>
+
+  <!-- SERIES COUNT -->
+  <div class="panel" id="series-panel" style="display:none">
+    <div class="phd"><span class="sp">★</span><span data-pt="Posts na série" data-en="Posts in series">Posts na série</span></div>
+    <div class="scnt">
+      <button class="sc on" onclick="setsc(4,this)">4<span class="sc-s" data-pt="posts · ~1 mês" data-en="posts · ~1 month">posts · ~1 mês</span></button>
+      <button class="sc" onclick="setsc(8,this)">8<span class="sc-s" data-pt="posts · ~2 meses" data-en="posts · ~2 months">posts · ~2 meses</span></button>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="panel">
+    <div class="phd"><span class="sp">1</span><span data-pt="Área profissional" data-en="Professional area">Área profissional</span></div>
+    <div class="g2">
+      <div class="fl">
+        <label class="lbl" data-pt="Área principal" data-en="Main area">Área principal</label>
+        <select id="area">
+          <option value="" data-pt="Selecione..." data-en="Select...">Selecione...</option>
+          <option value="UX / Product Design">UX / Product Design</option>
+          <option value="AI & Machine Learning">AI & Machine Learning</option>
+          <option value="Software Engineering">Software Engineering</option>
+          <option value="Technology Leadership">Technology Leadership</option>
+          <option value="Innovation & Digital Transformation">Innovation & Digital Transformation</option>
+          <option value="Data Science & Analytics">Data Science & Analytics</option>
+          <option value="Cybersecurity">Cybersecurity</option>
+          <option value="Digital Marketing & Growth">Digital Marketing & Growth</option>
+          <option value="Customer Experience">Customer Experience</option>
+          <option value="Product Management">Product Management</option>
+        </select>
+      </div>
+      <div class="fl">
+        <label class="lbl" data-pt="Especialidade" data-en="Speciality">Especialidade</label>
+        <input type="text" id="specialty" placeholder="ex: Conversational AI, GenAI...">
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <label class="lbl" style="display:block;margin-bottom:6px" data-pt="Perfil LinkedIn" data-en="LinkedIn profile">Perfil LinkedIn</label>
+      <div class="li-row">
+        <div class="li-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          linkedin.com/in/
+        </div>
+        <input type="text" id="li-url" placeholder="seu-usuario" style="flex:1">
+        <button class="btn-sm btn-li" onclick="openLI()">Abrir perfil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="panel">
+    <div class="phd"><span class="sp">2</span><span data-pt="Temas do mundo real" data-en="Real-world themes">Temas do mundo real</span></div>
+    <div class="chips" id="ctx-chips">
+      <span class="chip" data-c="c-peach" onclick="toggleChip(this,'ctx','Iran × USA War / Middle East Conflict')">🌍 <span data-pt="Guerra Irã × EUA" data-en="Iran × USA War">Guerra Irã × EUA</span></span>
+      <span class="chip" data-c="c-peach" onclick="toggleChip(this,'ctx','Russia × Ukraine Conflict')">⚔️ <span data-pt="Rússia × Ucrânia" data-en="Russia × Ukraine">Rússia × Ucrânia</span></span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'ctx','AI Arms Race between nations and big tech')">🤖 <span data-pt="Corrida de IA" data-en="AI Arms Race">Corrida de IA</span></span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'ctx','Rise of Large Language Models and Generative AI')">🧠 <span data-pt="Ascensão dos LLMs" data-en="Rise of LLMs">LLMs</span></span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'ctx','Generative AI disrupting corporate workflows')">✨ <span data-pt="IA Generativa" data-en="GenAI enterprise">IA Generativa</span></span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'ctx','Automation and the future of work')">⚙️ <span data-pt="Futuro do trabalho" data-en="Future of work">Futuro do trabalho</span></span>
+      <span class="chip" data-c="c-sand" onclick="toggleChip(this,'ctx','Global economic crisis and tech layoffs')">📉 <span data-pt="Crise & layoffs" data-en="Crisis & layoffs">Crise & layoffs</span></span>
+      <span class="chip" data-c="c-sand" onclick="toggleChip(this,'ctx','Technology job market evolution')">💼 <span data-pt="Mercado de trabalho" data-en="Tech job market">Mercado de trabalho</span></span>
+      <span class="chip" data-c="c-mint" onclick="toggleChip(this,'ctx','Startup ecosystem and venture capital')">🚀 <span data-pt="Startups" data-en="Startups">Startups</span></span>
+      <span class="chip" data-c="c-peach" onclick="toggleChip(this,'ctx','AI ethics, bias and regulation')">⚖️ <span data-pt="Ética em IA" data-en="AI Ethics">Ética em IA</span></span>
+      <span class="chip" data-c="c-mint" onclick="toggleChip(this,'ctx','Sustainability and green technology')">🌱 <span data-pt="Tech sustentável" data-en="Green tech">Tech sustentável</span></span>
+      <span class="chip" data-c="c-sky" onclick="toggleChip(this,'ctx','Global AI governance and policy')">🏛️ <span data-pt="Regulação de IA" data-en="AI Regulation">Regulação de IA</span></span>
+    </div>
+    <div class="add-row">
+      <input type="text" id="ctx-add" placeholder="Tema customizado..." onkeydown="if(event.key==='Enter')addChip('ctx')">
+      <button class="btn-plus" onclick="addChip('ctx')">+</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="panel">
+    <div class="phd"><span class="sp">3</span><span data-pt="Tags e palavras-chave" data-en="Tags & keywords">Tags e palavras-chave</span></div>
+    <div class="chips" id="tag-chips">
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'tag','Innovation')">Innovation</span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'tag','Artificial Intelligence')">Artificial Intelligence</span>
+      <span class="chip" data-c="c-mint" onclick="toggleChip(this,'tag','UX Design')">UX Design</span>
+      <span class="chip" data-c="c-mint" onclick="toggleChip(this,'tag','Product Design')">Product Design</span>
+      <span class="chip" data-c="c-sky" onclick="toggleChip(this,'tag','Leadership')">Leadership</span>
+      <span class="chip" data-c="c-sky" onclick="toggleChip(this,'tag','Digital Transformation')">Digital Transformation</span>
+      <span class="chip" data-c="c-sand" onclick="toggleChip(this,'tag','Future of Work')">Future of Work</span>
+      <span class="chip" data-c="c-sand" onclick="toggleChip(this,'tag','Tech Career')">Tech Career</span>
+      <span class="chip" data-c="c-peach" onclick="toggleChip(this,'tag','Geopolitics & Technology')">Geopolitics & Technology</span>
+      <span class="chip" data-c="c-mint" onclick="toggleChip(this,'tag','Customer Experience')">Customer Experience</span>
+      <span class="chip" data-c="c-lila" onclick="toggleChip(this,'tag','AI Strategy')">AI Strategy</span>
+      <span class="chip" data-c="c-sky" onclick="toggleChip(this,'tag','Product Strategy')">Product Strategy</span>
+    </div>
+    <div class="add-row">
+      <input type="text" id="tag-add" placeholder="Tag customizada..." onkeydown="if(event.key==='Enter')addChip('tag')">
+      <button class="btn-plus" onclick="addChip('tag')">+</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="panel">
+    <div class="phd"><span class="sp">4</span><span data-pt="Objetivo e tom" data-en="Goal & tone">Objetivo e tom</span></div>
+    <div class="g2" style="gap:1.5rem">
+      <div>
+        <label class="lbl" style="display:block;margin-bottom:8px" data-pt="Objetivo" data-en="Goal">Objetivo</label>
+        <div class="obj-grid">
+          <button class="obj-btn" onclick="selObj(this,'Build professional authority and thought leadership')"><span class="oi">🏆</span><div class="obj-tt"><span class="obj-t" data-pt="Gerar autoridade" data-en="Build authority">Gerar autoridade</span><span class="obj-s">Thought leadership</span></div></button>
+          <button class="obj-btn" onclick="selObj(this,'Attract recruiters and headhunters')"><span class="oi">🎯</span><div class="obj-tt"><span class="obj-t" data-pt="Atrair recrutadores" data-en="Attract recruiters">Atrair recrutadores</span><span class="obj-s" data-pt="Visibilidade" data-en="Visibility">Visibilidade</span></div></button>
+          <button class="obj-btn" onclick="selObj(this,'Demonstrate strategic and leadership vision')"><span class="oi">🔭</span><div class="obj-tt"><span class="obj-t" data-pt="Visão estratégica" data-en="Strategic vision">Visão estratégica</span><span class="obj-s">Tech leaders</span></div></button>
+          <button class="obj-btn" onclick="selObj(this,'Engage my network and generate comments')"><span class="oi">💬</span><div class="obj-tt"><span class="obj-t" data-pt="Engajar a rede" data-en="Engage network">Engajar a rede</span><span class="obj-s" data-pt="Comentários" data-en="Comments">Comentários</span></div></button>
+        </div>
+      </div>
+      <div>
+        <label class="lbl" style="display:block;margin-bottom:8px" data-pt="Tom de escrita" data-en="Writing tone">Tom de escrita</label>
+        <div class="tone-row">
+          <span class="tone-end" data-pt="Reflexivo" data-en="Reflective">Reflexivo</span>
+          <input type="range" id="tone" min="1" max="5" value="3" oninput="updTone(this.value)">
+          <span class="tone-end r" data-pt="Provocador" data-en="Provocative">Provocador</span>
+        </div>
+        <div class="tone-val" id="tone-lbl">—</div>
+        <div style="margin-top:1rem">
+          <label class="lbl" style="display:block;margin-bottom:5px" data-pt="Perspectiva pessoal" data-en="Personal angle">Perspectiva pessoal</label>
+          <input type="text" id="angle" placeholder="ex: 3 anos construindo produtos com IA...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="panel">
+    <div class="phd"><span class="sp">5</span><span data-pt="Estilo de escrita" data-en="Writing style">Estilo de escrita</span></div>
+    <div class="style-grid">
+      <div class="sp-card on" onclick="selStyle(this,'reflective-philosophical')"><span class="sp-badge">Seu perfil</span><div class="sp-title">🪞 Reflexivo & filosófico</div><div class="sp-desc">Perguntas profundas. Convida à reflexão antes da ação.</div></div>
+      <div class="sp-card" onclick="selStyle(this,'direct-bold')"><span class="sp-badge">Seu perfil</span><div class="sp-title">⚡ Direto & sem rodeios</div><div class="sp-desc">Frases curtas. Ponto de vista claro. Sem floreios.</div></div>
+      <div class="sp-card" onclick="selStyle(this,'storytelling')"><span class="sp-badge">Popular</span><div class="sp-title">📖 Storytelling pessoal</div><div class="sp-desc">Começa com história real. Insight no final.</div></div>
+      <div class="sp-card" onclick="selStyle(this,'data-driven')"><span class="sp-badge">B2B</span><div class="sp-title">📊 Dados & exemplos</div><div class="sp-desc">Números, cases e referências concretas.</div></div>
+      <div class="sp-card" onclick="selStyle(this,'provocative-contrarian')"><span class="sp-badge">Viral</span><div class="sp-title">🔥 Contrarian</div><div class="sp-desc">Vai contra o senso comum. Provoca reflexão.</div></div>
+      <div class="sp-card" onclick="selStyle(this,'educational-listicle')"><span class="sp-badge">Alcance</span><div class="sp-title">📋 Educacional</div><div class="sp-desc">Estrutura em tópicos. Fácil de consumir.</div></div>
+    </div>
+    <div>
+      <label class="clone-toggle" onclick="toggleClone()">
+        <input type="checkbox" id="clone-chk" onclick="event.stopPropagation()">
+        <div><div class="ct-lbl" data-pt="✨ Copiar meu jeito de escrever" data-en="✨ Clone my writing voice">✨ Copiar meu jeito de escrever</div><div class="ct-sub" data-pt="Cole exemplos dos seus posts e a IA vai imitar seu estilo" data-en="Paste your posts and AI will mimic your style">Cole exemplos dos seus posts</div></div>
+      </label>
+      <div id="clone-box" style="display:none">
+        <label class="lbl" style="display:block;margin-bottom:5px" data-pt="Cole 1 a 3 posts seus aqui" data-en="Paste 1-3 of your posts here">Cole 1 a 3 posts seus aqui</label>
+        <textarea id="clone-text" rows="5" placeholder="Cole aqui seus posts anteriores do LinkedIn..."></textarea>
+        <div style="font-size:11px;color:var(--t3);text-align:right;margin-top:3px"><span id="clone-chars">0</span> caracteres</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="err" id="err"><span id="err-msg"></span></div>
+  <button class="btn-gen" id="gen-btn" onclick="generate()">
+    <span>✦</span><span id="gen-lbl" data-pt="Gerar conteúdo completo" data-en="Generate full content">Gerar conteúdo completo</span>
+  </button>
+  <div class="loader" id="loader">
+    <div class="ld-spin"></div>
+    <div class="ld-pills" id="ld-pills"></div>
+    <div class="ld-txt" id="ld-txt"></div>
+  </div>
+</div>
+
+<!-- OUTPUT -->
+<div id="output">
+  <div class="out-hdr">
+    <div class="out-title">Conteúdo <em>gerado</em> ✦</div>
+    <div class="out-acts">
+      <button class="btn-sm btn-prev" onclick="openPreview()">👁 Preview LinkedIn</button>
+      <button class="btn-sm btn-li" onclick="openLI()">→ LinkedIn</button>
+      <button class="btn-sm" onclick="resetAll()">← Novo</button>
+    </div>
+  </div>
+  <div class="out-tabs" id="out-tabs"></div>
+  <div id="tab-content"></div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="modal-overlay" onclick="if(event.target===this)closePreview()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> Preview LinkedIn</div>
+      <button class="modal-x" onclick="closePreview()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="li-card" id="li-preview-content"></div>
+      <div class="prev-note" id="preview-note"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+let lang='pt', mode='single', seriesCount=4;
+let selObjVal='', toneVal=3, selStyleVal='reflective-philosophical';
+let ctxSel=[], tagSel=[], generatedData=null, cloneOn=false;
+
+// API KEY GROQ
+function saveKey(){
+  const inp=document.getElementById('api-key-input');
+  if(!inp)return;
+  const val=(inp.value||'').trim();
+  if(!val)return;
+  localStorage.setItem('cl_api_key',val);
+  document.getElementById('api-banner').style.borderColor='rgba(5,150,105,0.3)';
+  document.getElementById('api-banner').style.background='#f0fdf8';
+  document.getElementById('api-title').textContent='Groq configurado ✦';
+  document.getElementById('api-input-row').innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#f0fdf8;border:1px solid rgba(5,150,105,0.2);border-radius:10px;font-size:12px;font-weight:600;color:#059669"><div style="width:7px;height:7px;border-radius:50%;background:#059669"></div>Chave salva</div><button onclick="clearKey()" style="padding:8px 14px;background:transparent;border:1.5px solid rgba(28,25,23,0.14);border-radius:10px;font-size:12px;font-weight:600;color:#57534e;cursor:pointer">Alterar</button>`;
+}
+function clearKey(){localStorage.removeItem('cl_api_key');location.reload();}
+function initKey(){const saved=localStorage.getItem('cl_api_key')||'';if(saved){document.getElementById('api-key-input').value=saved;saveKey();}}
+
+// LANG
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-pt').classList.toggle('on',l==='pt');
+  document.getElementById('btn-en').classList.toggle('on',l==='en');
+  document.querySelectorAll('[data-pt]').forEach(el=>{
+    if(!['INPUT','TEXTAREA','SELECT'].includes(el.tagName)&&!el.querySelector('[data-pt]'))
+      el.textContent=el.getAttribute('data-'+l)||el.getAttribute('data-pt');
+  });
+  updTone(toneVal);
+}
+
+// MODE
+function setMode(m,el){
+  mode=m;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('series-panel').style.display=(m==='series'||m==='calendar')?'block':'none';
+  const L={pt:{single:'Gerar conteúdo completo',series:'Gerar série',calendar:'Gerar calendário'},en:{single:'Generate content',series:'Generate series',calendar:'Generate calendar'}};
+  document.getElementById('gen-lbl').textContent=L[lang][m];
+}
+function setsc(n,el){seriesCount=n;document.querySelectorAll('.sc').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+
+// CHIPS
+function toggleChip(el,type,value){
+  const list=type==='ctx'?ctxSel:tagSel;
+  const idx=list.indexOf(value);
+  const c=el.getAttribute('data-c')||'c-lila';
+  if(idx===-1){list.push(value);el.className='chip '+c;}
+  else{list.splice(idx,1);el.className='chip';el.setAttribute('data-c',c);}
+}
+function addChip(type){
+  const id=type==='ctx'?'ctx-add':'tag-add';
+  const cid=type==='ctx'?'ctx-chips':'tag-chips';
+  const list=type==='ctx'?ctxSel:tagSel;
+  const inp=document.getElementById(id);
+  const v=inp.value.trim();
+  if(!v||list.includes(v)){inp.value='';return;}
+  list.push(v);
+  const chip=document.createElement('span');
+  chip.className='chip c-peach';chip.setAttribute('data-c','c-peach');
+  const txt=document.createTextNode('🔖 '+v+' ');
+  const x=document.createElement('span');
+  x.style.cssText='cursor:pointer;opacity:.5';x.textContent='×';
+  x.onclick=()=>{const i=list.indexOf(v);if(i>-1)list.splice(i,1);chip.remove();};
+  chip.append(txt,x);document.getElementById(cid).appendChild(chip);inp.value='';
+}
+
+// OBJECTIVE
+function selObj(btn,val){document.querySelectorAll('.obj-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');selObjVal=val;}
+
+// TONE
+const toneL={pt:{1:'Muito reflexivo',2:'Reflexivo',3:'Equilibrado',4:'Direto e assertivo',5:'Altamente provocador'},en:{1:'Very reflective',2:'Reflective',3:'Balanced',4:'Direct and assertive',5:'Highly provocative'}};
+function updTone(v){toneVal=parseInt(v);document.getElementById('tone-lbl').textContent=toneL[lang][v]||'';}
+updTone(3);
+
+// STYLE
+const styleDesc={
+  'reflective-philosophical':'Write in a reflective, philosophical tone. Use open questions and invite the reader to think deeply.',
+  'direct-bold':'Write with short sentences. Be bold and direct. No fluff. Every word earns its place.',
+  'storytelling':'Start with a personal story or specific situation. The insight arrives naturally at the end.',
+  'data-driven':'Use concrete data, statistics and real case studies. Be technically credible.',
+  'provocative-contrarian':'Open with a statement that challenges conventional wisdom.',
+  'educational-listicle':'Structure with clear numbers or bullets. Make it scannable and easy to consume.'
+};
+function selStyle(el,style){document.querySelectorAll('.sp-card').forEach(p=>p.classList.remove('on'));el.classList.add('on');selStyleVal=style;}
+
+// CLONE
+function toggleClone(){
+  cloneOn=!cloneOn;
+  document.getElementById('clone-chk').checked=cloneOn;
+  document.getElementById('clone-box').style.display=cloneOn?'block':'none';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const ta=document.getElementById('clone-text');
+  if(ta)ta.addEventListener('input',()=>document.getElementById('clone-chars').textContent=ta.value.length);
+  updTone(3);
+  initKey();
+});
+
+// LINKEDIN
+function openLI(){const u=document.getElementById('li-url').value.trim();window.open(u?`https://linkedin.com/in/${u.replace(/.*linkedin\.com\/in\//,'')}`:'https://linkedin.com/feed/','_blank');}
+
+// ERROR
+function showErr(msg){const el=document.getElementById('err');document.getElementById('err-msg').textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
+
+// LOADER
+const ldSteps={pt:{single:['Cruzando contextos','Construindo narrativa','Aplicando estilo','Gerando carrossel'],series:['Mapeando série','Construindo arco','Gerando posts','Calibrando calendário'],calendar:['Analisando temas','Distribuindo conteúdo','Calculando datas','Gerando calendário']},en:{single:['Crossing contexts','Building narrative','Applying style','Building carousel'],series:['Mapping series','Building arc','Generating posts','Calibrating calendar'],calendar:['Analyzing themes','Distributing','Calculating dates','Generating calendar']}};
+let ldTimer;
+function startLoader(){
+  const steps=ldSteps[lang][mode];
+  const pills=document.getElementById('ld-pills');
+  const txt=document.getElementById('ld-txt');
+  pills.innerHTML=steps.map((s,i)=>`<span class="ld-pill" id="lp${i}">${s}</span>`).join('');
+  let i=0;
+  function tick(){document.querySelectorAll('.ld-pill').forEach((el,j)=>{if(j<i)el.className='ld-pill done';else if(j===i)el.className='ld-pill active';else el.className='ld-pill';});txt.textContent=steps[i]+'...';i=(i+1)%steps.length;}
+  tick();ldTimer=setInterval(tick,2200);
+}
+function stopLoader(){clearInterval(ldTimer);}
+
+// BUILD PROMPT
+function buildPrompt(){
+  const area=document.getElementById('area').value;
+  const specialty=document.getElementById('specialty').value.trim();
+  const angle=document.getElementById('angle').value.trim();
+  const cloneText=cloneOn?document.getElementById('clone-text').value.trim():'';
+  const outLang=lang==='pt'?'Brazilian Portuguese':'English';
+  const toneDesc=toneL.en[toneVal];
+  const sDesc=styleDesc[selStyleVal]||styleDesc['reflective-philosophical'];
+  const ctxStr=ctxSel.join(', ');
+  const tagStr=tagSel.length?tagSel.join(', '):'not specified';
+  const voiceInstr=cloneText.length>50
+    ?`\n\nVOICE CLONING — CRITICAL: Analyze these writing samples and replicate the exact style:\n---\n${cloneText}\n---`
+    :`\n\nWRITING STYLE: ${sDesc}`;
+
+  if(mode==='single'){
+    return `You are a LinkedIn content strategist for tech professionals. Output language: ${outLang}.
+USER: area=${area}, speciality=${specialty||'none'}, themes to cross=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, personal angle=${angle||'none'}
+${voiceInstr}
+
+Return ONLY this exact JSON structure, no extra text:
+{
+  "article": "150-220 word LinkedIn post. Hook in first line. Connect ${area} with ${ctxSel[0]||ctxStr}. End with a question. Use \\n\\n between paragraphs.",
+  "keywords": ["kw1","kw2","kw3","kw4","kw5","kw6"],
+  "hashtags": ["#tag1","#tag2","#tag3","#tag4","#tag5","#tag6","#tag7"],
+  "visual": "Visual cover concept: format, colors, elements, typography in 3-4 sentences.",
+  "slides": [
+    {"num":"Slide 1","title":"impactful title","body":"subtitle or hook"},
+    {"num":"Slide 2","title":"problem or context","body":"1-2 sentences"},
+    {"num":"Slide 3","title":"insight","body":"1-2 sentences"},
+    {"num":"Slide 4","title":"key twist","body":"1-2 sentences"},
+    {"num":"Slide 5","title":"reflection","body":"1-2 sentences"},
+    {"num":"Final","title":"call to action","body":"engagement prompt"}
+  ],
+  "connection": "2-3 lines on how the themes connect strategically.",
+  "future": [
+    {"icon":"💡","text":"Post 2: title and brief description"},
+    {"icon":"🔥","text":"Post 3: title and brief description"},
+    {"icon":"🧠","text":"Post 4: title and brief description"}
+  ],
+  "authorName": "Tech Professional",
+  "authorHeadline": "${area}${specialty?' · '+specialty:''}"
+}`;
+  }
+  const n=seriesCount;
+  return `You are a world-class LinkedIn content strategist. Create a ${n}-post series.
+USER: area=${area}, themes=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, language=${outLang}
+${voiceInstr}
+Return ONLY valid JSON:
+{"seriesTitle":"title","seriesNarrative":"2-3 lines on arc","authorName":"Professional","authorHeadline":"${area}","posts":[${Array.from({length:n},(_,i)=>`{"postNumber":${i+1},"title":"headline","article":"150-200 word post","keywords":["k1","k2","k3"],"hashtags":["#h1","#h2","#h3","#h4","#h5"],"slideTitle":"carousel title","visualHint":"brief visual","bestDay":"${['Tuesday','Wednesday','Thursday','Monday','Wednesday','Thursday','Tuesday','Wednesday'][i]}","bestTime":"${['09:00','18:00','08:00','12:00','09:00','18:00','08:00','12:00'][i]}","weekOffset":${i%2===0?Math.floor(i/2)*7+2:Math.floor(i/2)*7+5}}`).join(',')}],"calendarNotes":"timing notes","connection":"strategic connection"}`;
+}
+
+// GENERATE — usa API nativa do Claude.ai
+async function generate(){
+  const area=document.getElementById('area').value;
+  if(!area){showErr(lang==='pt'?'Selecione sua área profissional.':'Select your professional area.');return;}
+  if(ctxSel.length===0){showErr(lang==='pt'?'Selecione ao menos um tema.':'Select at least one theme.');return;}
+  if(!selObjVal){showErr(lang==='pt'?'Selecione o objetivo.':'Select a goal.');return;}
+
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('loader').classList.add('show');
+  document.getElementById('err').classList.remove('show');
+  startLoader();
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4000,
+        messages:[{role:'user',content:buildPrompt()}]
+      })
+    });
+
+    const data=await res.json();
+
+    // Mostra erro exato se falhar
+    if(!res.ok){
+      const msg=data?.error?.message||data?.error||('Erro HTTP '+res.status);
+      throw new Error(msg);
+    }
+
+    const raw=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    let clean=raw.replace(/```json|```/g,'').trim();
+    const s=clean.indexOf('{'),e=clean.lastIndexOf('}');
+    if(s!==-1)clean=clean.slice(s,e+1);
+
+    generatedData=JSON.parse(clean);
+    renderOutput();
+
+  }catch(err){
+    console.error('Erro detalhado:', err);
+    showErr('Erro: '+err.message);
+    document.getElementById('gen-btn').disabled=false;
+  }finally{
+    stopLoader();
+    document.getElementById('loader').classList.remove('show');
+  }
+}
+
+// RENDER
+function renderOutput(){
+  document.getElementById('form-wrap').style.display='none';
+  document.getElementById('output').classList.add('show');
+  const tabs=document.getElementById('out-tabs');
+  if(mode==='single'){
+    const tL=lang==='pt'?['✦ Artigo','Keywords','Carrossel','Visual','Conexão']:['✦ Article','Keywords','Carousel','Visual','Connection'];
+    tabs.innerHTML=tL.map((t,i)=>`<button class="out-tab${i===0?' on':''}" onclick="sTab(${i},this)">${t}</button>`).join('');
+    sTab(0,tabs.querySelector('.on'));
+  }else{
+    const posts=generatedData.posts||[];
+    tabs.innerHTML=`<button class="out-tab on" onclick="sTabs(-1,this)">${lang==='pt'?'Visão geral':'Overview'}</button>`+
+      posts.map((p,i)=>`<button class="out-tab" onclick="sTabs(${i},this)">Post ${p.postNumber}</button>`).join('')+
+      `<button class="out-tab" onclick="sTabs(99,this)">📅 ${lang==='pt'?'Calendário':'Calendar'}</button>`;
+    renderSeriesOverview();
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sTab(i,btn){
+  document.querySelectorAll('.out-tab').forEach(t=>t.classList.toggle('on',t===btn));
+  const d=generatedData,c=document.getElementById('tab-content');
+  if(i===0){
+    const wc=(d.article||'').split(/\s+/).filter(Boolean).length;
+    c.innerHTML=`<div class="sec">${lang==='pt'?'Artigo para LinkedIn':'LinkedIn Article'}</div>
+    <div class="art-card"><div class="art-body" id="art-body">${esc(d.article||'')}</div>
+    <div class="art-footer"><span class="wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
+    <div style="display:flex;gap:8px"><button class="copy-btn" onclick="cp(this,'art-body')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
+    <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreview()">👁 Preview</button></div></div></div>`;
+  }else if(i===1){
+    c.innerHTML=`<div class="sec">Keywords</div><div class="kw-row" style="margin-bottom:1.25rem">${(d.keywords||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('')}</div>
+    <div class="sec">Hashtags</div><div class="kw-row">${(d.hashtags||[]).map(h=>`<span class="ht">${esc(h)}</span>`).join('')}</div>`;
+  }else if(i===2){
+    c.innerHTML=`<div class="sec">${lang==='pt'?'Carrossel':'Carousel'}</div>
+    <div class="slides-row">${(d.slides||[]).map(sl=>`<div class="slide"><div class="sl-n">${esc(sl.num)}</div><div class="sl-t">${esc(sl.title)}</div><div class="sl-b">${esc(sl.body)}</div></div>`).join('')}</div>`;
+  }else if(i===3){
+    c.innerHTML=`<div class="sec">${lang==='pt'?'Capa visual':'Visual cover'}</div><div class="vis-box">${esc(d.visual||'')}</div>`;
+  }else if(i===4){
+    c.innerHTML=`<div class="sec">${lang==='pt'?'Conexão entre temas':'Theme connection'}</div>
+    <div class="conn-bar">${esc(d.connection||'')}</div>
+    <div class="sec">${lang==='pt'?'Posts futuros':'Future posts'}</div>
+    ${(d.future||[]).map(f=>`<div class="fut"><span style="font-size:16px;flex-shrink:0">${f.icon}</span><span style="font-size:13px;line-height:1.6;color:var(--t2)">${esc(f.text)}</span></div>`).join('')}`;
+  }
+}
+
+function sTabs(idx,btn){
+  document.querySelectorAll('.out-tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+  if(idx===-1)renderSeriesOverview();
+  else if(idx===99)renderCalendar();
+  else renderSeriesPost(idx);
+}
+
+function renderSeriesOverview(){
+  const d=generatedData,c=document.getElementById('tab-content');
+  c.innerHTML=`<div class="sec">${lang==='pt'?'Arco narrativo':'Narrative arc'}</div>
+  <div class="art-card" style="margin-bottom:1.25rem">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--lila2);margin-bottom:8px">${esc(d.seriesTitle||'')}</div>
+    <div style="font-size:13px;line-height:1.75;color:var(--t2)">${esc(d.seriesNarrative||'')}</div>
+  </div>
+  <div class="sec">${lang==='pt'?'Posts da série':'Series posts'}</div>
+  ${(d.posts||[]).map((p,i)=>`<div class="fut" style="cursor:pointer" onclick="jumpPost(${i})">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--lilabg);border:1.5px solid var(--lilabrd);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:14px;color:var(--lila2);flex-shrink:0">${p.postNumber}</div>
+    <div><div style="font-size:13px;font-weight:600;margin-bottom:2px">${esc(p.title)}</div><div style="font-size:11px;color:var(--t3)">📅 ${p.bestDay} · ⏰ ${p.bestTime}</div></div>
+  </div>`).join('')}
+  <div class="sec" style="margin-top:1.25rem">${lang==='pt'?'Conexão estratégica':'Strategic connection'}</div>
+  <div class="conn-bar">${esc(d.connection||'')}</div>`;
+}
+
+function jumpPost(idx){
+  const tabs=document.querySelectorAll('.out-tab');
+  if(tabs[idx+1]){tabs.forEach(t=>t.classList.remove('on'));tabs[idx+1].classList.add('on');renderSeriesPost(idx);}
+}
+
+function renderSeriesPost(idx){
+  const p=(generatedData.posts||[])[idx];if(!p)return;
+  const c=document.getElementById('tab-content');
+  const wc=(p.article||'').split(/\s+/).filter(Boolean).length;
+  c.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem">
+    <div style="width:36px;height:36px;border-radius:10px;background:var(--lilabg);border:1.5px solid var(--lilabrd);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:800;font-size:17px;color:var(--lila2)">${p.postNumber}</div>
+    <div><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700">${esc(p.title)}</div><div style="font-size:11px;color:var(--t3)">📅 ${p.bestDay} · ⏰ ${p.bestTime}</div></div>
+  </div>
+  <div class="sec">${lang==='pt'?'Artigo':'Article'}</div>
+  <div class="art-card" style="margin-bottom:1.25rem">
+    <div class="art-body" id="post-${idx}">${esc(p.article||'')}</div>
+    <div class="art-footer"><span class="wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
+    <div style="display:flex;gap:8px">
+      <button class="copy-btn" onclick="cp(this,'post-${idx}')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
+      <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreviewPost(${idx})">👁 Preview</button>
+    </div></div>
+  </div>
+  <div class="sec">Keywords</div><div class="kw-row" style="margin-bottom:1.25rem">${(p.keywords||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('')}</div>
+  <div class="sec">Hashtags</div><div class="kw-row" style="margin-bottom:1.25rem">${(p.hashtags||[]).map(h=>`<span class="ht">${esc(h)}</span>`).join('')}</div>
+  <div class="sec">${lang==='pt'?'Slide principal':'Main slide'}</div><div class="vis-box" style="margin-bottom:1.25rem">${esc(p.slideTitle||'')}</div>
+  <div class="sec">${lang==='pt'?'Conceito visual':'Visual concept'}</div><div class="vis-box">${esc(p.visualHint||'')}</div>`;
+}
+
+function renderCalendar(){
+  const d=generatedData,posts=d.posts||[];
+  const c=document.getElementById('tab-content');
+  const today=new Date();
+  const mon=new Date(today);mon.setDate(today.getDate()-((today.getDay()||7)-1));
+  const dayL=lang==='pt'?['Seg','Ter','Qua','Qui','Sex','Sáb','Dom']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const postMap={};
+  posts.forEach(p=>{const d2=new Date(mon);d2.setDate(mon.getDate()+(p.weekOffset||0));postMap[d2.toDateString()]=p;});
+  let html=`<div class="cal-wrap"><div class="cal-grid">${dayL.map(d=>`<div class="cal-hd">${d}</div>`).join('')}`;
+  for(let w=0;w<5;w++){
+    for(let dv=0;dv<7;dv++){
+      const dt=new Date(mon);dt.setDate(mon.getDate()+w*7+dv);
+      const key=dt.toDateString();const hp=postMap[key];
+      const isToday=dt.toDateString()===today.toDateString();const isWD=dv<5;
+      if(hp){
+        html+=`<div class="cal-day has-post${isWD?' opt':''}" onclick="jumpToPost(${hp.postNumber-1})"><span class="cal-num">${dt.getDate()}</span><div class="cal-dot"></div><div class="cal-tag">P${hp.postNumber}</div></div>`;
+      }else{
+        html+=`<div class="cal-day${isToday?' today':''}${isWD?' opt':''}"><span class="cal-num">${dt.getDate()}</span>${isWD?`<div class="cal-dot" style="background:var(--brd2)"></div>`:''}</div>`;
+      }
+    }
+  }
+  html+=`</div><div class="cal-leg">
+    <div class="leg"><div class="leg-dot" style="background:var(--lila2)"></div>${lang==='pt'?'Post agendado':'Scheduled'}</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--mint2)"></div>${lang==='pt'?'Dia ótimo':'Optimal day'}</div>
+  </div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--brd);font-size:13px;color:var(--t2);line-height:1.7">${esc(d.calendarNotes||d.connection||'')}</div></div>`;
+  c.innerHTML=html;
+}
+
+function jumpToPost(idx){
+  const tabs=document.querySelectorAll('.out-tab');
+  if(tabs[idx+1]){tabs.forEach(t=>t.classList.remove('on'));tabs[idx+1].classList.add('on');renderSeriesPost(idx);window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+// PREVIEW
+function buildPreviewHTML(article,hashtags,authorName,authorHeadline){
+  const initials=(authorName||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const truncated=article.length>420?article.slice(0,420)+'...':article;
+  const htHTML=(hashtags||[]).slice(0,5).map(h=>`<span class="li-tag">${esc(h)} </span>`).join('');
+  return `<div class="li-hd"><div class="li-av">${initials}</div><div><div class="li-nm">${esc(authorName||'Você')}</div><div class="li-hl">${esc(authorHeadline||'')}</div><div class="li-tm">Agora · 🌐</div></div></div>
+  <div class="li-body">${esc(truncated)}${article.length>420?`<span style="color:#0a66c2;cursor:pointer"> ...ver mais</span>`:''}</div>
+  <div class="li-tags">${htHTML}</div>
+  <div class="li-eng"><div style="display:flex;align-items:center;gap:6px"><div style="display:flex"><div style="width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#0a66c2;display:flex;align-items:center;justify-content:center;font-size:11px">👍</div><div style="width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#d4a017;margin-left:-4px;display:flex;align-items:center;justify-content:center;font-size:11px">💡</div></div>&nbsp;Seja o primeiro</div><span>0 comentários</span></div>
+  <div class="li-acts"><button class="li-act">👍 Curtir</button><button class="li-act">💬 Comentar</button><button class="li-act">🔁 Repostar</button><button class="li-act">📤 Enviar</button></div>`;
+}
+
+function openPreview(){
+  if(!generatedData)return;
+  const d=generatedData;
+  document.getElementById('li-preview-content').innerHTML=buildPreviewHTML(d.article||'',d.hashtags||[],d.authorName,d.authorHeadline);
+  document.getElementById('preview-note').textContent='✦ Prévia de como seu post vai aparecer no LinkedIn.';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function openPreviewPost(idx){
+  const p=(generatedData.posts||[])[idx];if(!p)return;
+  document.getElementById('li-preview-content').innerHTML=buildPreviewHTML(p.article||'',p.hashtags||[],generatedData.authorName,generatedData.authorHeadline);
+  document.getElementById('preview-note').textContent=`✦ Prévia do Post ${p.postNumber}: "${p.title}"`;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function closePreview(){document.getElementById('modal-overlay').classList.remove('show');}
+
+// UTILS
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cp(btn,id){
+  const el=document.getElementById(id);if(!el)return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{const o=btn.textContent;btn.textContent='✓ '+(lang==='pt'?'Copiado!':'Copied!');setTimeout(()=>btn.textContent=o,2000);});
+}
+function resetAll(){
+  generatedData=null;
+  document.getElementById('output').classList.remove('show');
+  document.getElementById('form-wrap').style.display='block';
+  document.getElementById('gen-btn').disabled=false;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
