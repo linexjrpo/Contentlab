@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const apiKey = req.headers['x-user-api-key'];
+  const apiKey = req.headers['x-user-api-key'] || req.headers['x-api-key'] || req.body?.apiKey;
   if (!apiKey) {
     return res.status(401).json({ error: 'API key ausente.' });
   }
