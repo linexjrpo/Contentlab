@@ -106,14 +106,27 @@ select option{background:var(--white)}
 .ct-lbl{font-size:13px;font-weight:600;color:var(--sand2)}
 .ct-sub{font-size:11px;color:var(--t3);margin-top:1px}
 
-/* TONE */
-.tone-row{display:flex;align-items:center;gap:10px;margin-top:8px}
-.tone-end{font-size:11px;color:var(--t2);min-width:60px;white-space:nowrap}
-.tone-end.r{text-align:right}
-input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:linear-gradient(90deg,#059669,#7c3aed,#dc2626);border-radius:2px;border:none;padding:0;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--white);border:3px solid var(--lila2);cursor:pointer;box-shadow:var(--sh);transition:transform .15s}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
-.tone-val{text-align:center;font-size:12px;font-weight:600;color:var(--lila2);margin-top:5px}
+/* TONE CHIPS */
+.tone-chips{display:flex;flex-wrap:wrap;gap:7px}
+.tone-chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--brd2);background:var(--bg2);color:var(--t2);transition:all .18s;user-select:none}
+.tone-chip:hover{border-color:var(--lila2);color:var(--lila2);background:var(--lilabg)}
+.tone-chip.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2);font-weight:600}
+/* SIZE BUTTONS */
+.size-btns{display:flex;gap:8px}
+.size-btn{flex:1;padding:10px 8px;background:var(--bg);border:1.5px solid var(--brd);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .18s;text-align:center}
+.size-btn:hover{border-color:var(--lila2);color:var(--lila2);background:var(--lilabg)}
+.size-btn.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+/* REWRITE PANEL */
+.rewrite-panel{background:var(--bg2);border:1.5px dashed var(--brd2);border-radius:14px;padding:1.25rem;margin-top:1rem}
+.rewrite-styles{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.rw-chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--brd2);background:var(--white);color:var(--t2);transition:all .18s}
+.rw-chip:hover{border-color:var(--lila2);color:var(--lila2)}
+.rw-chip.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+.btn-rewrite{padding:9px 20px;background:linear-gradient(135deg,var(--lila2),#9333ea);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-rewrite:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3)}
+.btn-rewrite:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-canva{padding:9px 16px;background:#7d2ae8;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn-canva:hover{background:#6d1fd4;transform:translateY(-1px)}
 
 /* LINKEDIN */
 .li-row{display:flex;gap:8px;align-items:center;margin-top:1rem}
@@ -386,7 +399,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
 
   <!-- STEP 4 -->
   <div class="panel">
-    <div class="phd"><span class="sp">4</span><span data-pt="Objetivo e tom" data-en="Goal & tone">Objetivo e tom</span></div>
+    <div class="phd"><span class="sp">4</span><span data-pt="Objetivo, tom e tamanho" data-en="Goal, tone & size">Objetivo, tom e tamanho</span></div>
     <div class="g2" style="gap:1.5rem">
       <div>
         <label class="lbl" style="display:block;margin-bottom:8px" data-pt="Objetivo" data-en="Goal">Objetivo</label>
@@ -399,12 +412,24 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
       </div>
       <div>
         <label class="lbl" style="display:block;margin-bottom:8px" data-pt="Tom de escrita" data-en="Writing tone">Tom de escrita</label>
-        <div class="tone-row">
-          <span class="tone-end" data-pt="Reflexivo" data-en="Reflective">Reflexivo</span>
-          <input type="range" id="tone" min="1" max="5" value="3" oninput="updTone(this.value)">
-          <span class="tone-end r" data-pt="Provocador" data-en="Provocative">Provocador</span>
+        <div class="tone-chips" id="tone-chips">
+          <span class="tone-chip on" data-tone="reflective" onclick="selTone(this,'reflective','Reflective and philosophical — use open questions, invite deep thinking, pause between ideas')">🪞 Reflexivo</span>
+          <span class="tone-chip" data-tone="provocative" onclick="selTone(this,'provocative','Provocative and direct — challenge conventional wisdom, short sentences, bold statements')">🔥 Provocador</span>
+          <span class="tone-chip" data-tone="narrative" onclick="selTone(this,'narrative','Narrative storytelling — start with a personal story, build tension, insight arrives at the end')">📖 Narrativo</span>
+          <span class="tone-chip" data-tone="ironic" onclick="selTone(this,'ironic','Ironic and witty — use dry humor, subtle sarcasm, unexpected twists that make the reader smile and think')">😏 Irônico</span>
+          <span class="tone-chip" data-tone="educational" onclick="selTone(this,'educational','Educational and structured — clear numbered insights, practical takeaways, teach something concrete')">📚 Educacional</span>
+          <span class="tone-chip" data-tone="urgent" onclick="selTone(this,'urgent','Urgent and alarming — create a sense of urgency, this is happening now, the reader cannot ignore this')">⚡ Urgente</span>
+          <span class="tone-chip" data-tone="empathetic" onclick="selTone(this,'empathetic','Empathetic and human — acknowledge struggles, speak to emotions, make the reader feel understood')">🤝 Empático</span>
+          <span class="tone-chip" data-tone="minimalist" onclick="selTone(this,'minimalist','Minimalist and precise — every word earns its place, no fluff, maximum impact with minimum words')">◾ Minimalista</span>
         </div>
-        <div class="tone-val" id="tone-lbl">—</div>
+        <div style="margin-top:1rem">
+          <label class="lbl" style="display:block;margin-bottom:8px" data-pt="Tamanho do texto" data-en="Text size">Tamanho do texto</label>
+          <div class="size-btns" id="size-btns">
+            <button class="size-btn" onclick="selSize(this,'short','Write a SHORT post of approximately 80 words maximum. Be extremely concise and punchy.')">📱 Curto<span style="display:block;font-size:10px;opacity:.7;margin-top:2px">~80 palavras</span></button>
+            <button class="size-btn on" onclick="selSize(this,'medium','Write a MEDIUM post of approximately 150 words. Balance depth with readability.')">📄 Médio<span style="display:block;font-size:10px;opacity:.7;margin-top:2px">~150 palavras</span></button>
+            <button class="size-btn" onclick="selSize(this,'long','Write a LONG post of 200 words or more. Go deep, use storytelling, be comprehensive.')">📝 Longo<span style="display:block;font-size:10px;opacity:.7;margin-top:2px">+200 palavras</span></button>
+          </div>
+        </div>
         <div style="margin-top:1rem">
           <label class="lbl" style="display:block;margin-bottom:5px" data-pt="Perspectiva pessoal" data-en="Personal angle">Perspectiva pessoal</label>
           <input type="text" id="angle" placeholder="ex: 3 anos construindo produtos com IA...">
@@ -453,7 +478,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
   <div class="out-hdr">
     <div class="out-title">Conteúdo <em>gerado</em> ✦</div>
     <div class="out-acts">
-      <button class="btn-sm btn-prev" onclick="openPreview()">👁 Preview LinkedIn</button>
+      <button class="btn-sm btn-prev" onclick="openPreview()">👁 Preview</button>
       <button class="btn-sm btn-li" onclick="openLI()">→ LinkedIn</button>
       <button class="btn-sm" onclick="resetAll()">← Novo</button>
     </div>
@@ -548,10 +573,77 @@ function addChip(type){
 // OBJECTIVE
 function selObj(btn,val){document.querySelectorAll('.obj-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');selObjVal=val;}
 
-// TONE
-const toneL={pt:{1:'Muito reflexivo',2:'Reflexivo',3:'Equilibrado',4:'Direto e assertivo',5:'Altamente provocador'},en:{1:'Very reflective',2:'Reflective',3:'Balanced',4:'Direct and assertive',5:'Highly provocative'}};
-function updTone(v){toneVal=parseInt(v);document.getElementById('tone-lbl').textContent=toneL[lang][v]||'';}
-updTone(3);
+// TONE CHIPS
+let toneVal='reflective';
+let toneDesc='Reflective and philosophical — use open questions, invite deep thinking, pause between ideas';
+function selTone(el,tone,desc){
+  document.querySelectorAll('.tone-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  toneVal=tone;toneDesc=desc;
+}
+
+// SIZE
+let textSize='medium';
+let textSizeInstr='Write a MEDIUM post of approximately 150 words. Balance depth with readability.';
+function selSize(el,size,instr){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  textSize=size;textSizeInstr=instr;
+}
+
+// REWRITE STYLE
+let rwStyle='reflective-philosophical';
+function selRw(el,style){
+  document.querySelectorAll('.rw-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');rwStyle=style;
+}
+
+const rwStyleDesc={
+  'reflective-philosophical':'Reflective and philosophical — use open questions, invite deep thinking',
+  'direct-bold':'Direct and bold — short sentences, clear point of view, no fluff',
+  'storytelling':'Personal storytelling — start with a real story, insight arrives at the end',
+  'ironic':'Ironic and witty — dry humor, unexpected twists, subtle sarcasm',
+  'educational':'Educational — clear structured insights, practical takeaways, teach something',
+  'urgent':'Urgent — sense of urgency, this is happening now, cannot be ignored',
+  'empathetic':'Empathetic — acknowledge struggles, speak to emotions, feel understood',
+  'minimalist':'Minimalist — every word earns its place, maximum impact, minimum words',
+  'provocative-contrarian':'Provocative contrarian — challenges conventional wisdom, bold statements'
+};
+
+async function rewrite(){
+  const btn=document.getElementById('rw-btn');
+  const original=document.getElementById('art-body')?.innerText||'';
+  if(!original){return;}
+  const apiKey=localStorage.getItem('cl_api_key')||'';
+  if(!apiKey){showErr('Chave Groq não configurada.');return;}
+  btn.disabled=true;
+  btn.textContent='↻ '+(lang==='pt'?'Gerando...':'Generating...');
+  const style=rwStyleDesc[rwStyle]||rwStyleDesc['reflective-philosophical'];
+  const rewritePrompt=`Rewrite this LinkedIn post in a completely different style. 
+ORIGINAL POST:
+${original}
+
+NEW STYLE: ${style}
+OUTPUT LANGUAGE: ${lang==='pt'?'Brazilian Portuguese':'English'}
+IMPORTANT: Keep the same topic and key message but completely change the tone, structure and voice. Same length. Return ONLY the rewritten post text, no JSON, no explanation.`;
+  try{
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({apiKey,messages:[{role:'user',content:rewritePrompt}]})
+    });
+    const data=await res.json();
+    if(!res.ok)throw new Error(data?.error||'Erro');
+    const text=data?.content?.[0]?.text||'';
+    const rwBody=document.getElementById('rw-body');
+    const rwWc=document.getElementById('rw-wc');
+    const rwResult=document.getElementById('rw-result');
+    if(rwBody){rwBody.textContent=text;}
+    if(rwWc){rwWc.textContent=text.split(/\s+/).filter(Boolean).length+' '+(lang==='pt'?'palavras':'words');}
+    if(rwResult){rwResult.style.display='block';}
+  }catch(e){showErr('Erro ao reescrever: '+e.message);}
+  finally{btn.disabled=false;btn.textContent='↻ '+(lang==='pt'?'Gerar nova versão':'Generate new version');}
+}
 
 // STYLE
 const styleDesc={
@@ -573,7 +665,6 @@ function toggleClone(){
 document.addEventListener('DOMContentLoaded',()=>{
   const ta=document.getElementById('clone-text');
   if(ta)ta.addEventListener('input',()=>document.getElementById('clone-chars').textContent=ta.value.length);
-  updTone(3);
   initKey();
 });
 
@@ -612,21 +703,26 @@ function buildPrompt(){
     ?`\n\nVOICE CLONING — CRITICAL: Analyze these writing samples and replicate the exact style:\n---\n${cloneText}\n---`
     :`\n\nWRITING STYLE: ${sDesc}`;
 
+  const toneDescFinal = toneDesc || 'Reflective and philosophical';
+
   if(mode==='single'){
     return `You are a LinkedIn content strategist for tech professionals. Output language: ${outLang}.
-USER: area=${area}, speciality=${specialty||'none'}, themes=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, angle=${angle||'none'}
+USER: area=${area}, speciality=${specialty||'none'}, themes=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, angle=${angle||'none'}
 ${voiceInstr}
+
+TONE: ${toneDescFinal}
+SIZE: ${textSizeInstr}
 
 Write a LinkedIn article with EXACTLY these 4 parts separated by \\n\\n:
 PART 1 (hook - 2-3 sentences): A provocative or surprising opening statement connecting ${area} with ${ctxSel[0]||ctxStr}. Make the reader stop scrolling.
-PART 2 (context - 3-4 sentences): Explain the situation or problem in depth. Use a specific example or real scenario.
-PART 3 (insight - 3-4 sentences): Your professional insight or unique perspective. What most people miss. What you learned.
-PART 4 (question - 1-2 sentences): End with an open question that invites comments and discussion.
+PART 2 (context - 2-3 sentences): Explain the situation or problem. Use a specific example or real scenario.
+PART 3 (insight - 2-3 sentences): Your professional insight or unique perspective. What most people miss.
+PART 4 (question - 1-2 sentences): End with an open question that invites comments.
 
-Each part must be substantial. Do not summarize or compress.
+Apply the TONE instruction to every sentence. Do not summarize or compress.
 
 Return ONLY this JSON (no markdown, no extra text):
-{"article":"[PART1]\\n\\n[PART2]\\n\\n[PART3]\\n\\n[PART4]","keywords":["k1","k2","k3","k4","k5","k6"],"hashtags":["#h1","#h2","#h3","#h4","#h5","#h6","#h7"],"visual":"Visual cover concept in 3 sentences: format, colors, key visual elements.","slides":[{"num":"Slide 1","title":"impactful title","body":"hook"},{"num":"Slide 2","title":"context","body":"2 sentences"},{"num":"Slide 3","title":"insight","body":"2 sentences"},{"num":"Slide 4","title":"twist","body":"2 sentences"},{"num":"Slide 5","title":"reflection","body":"2 sentences"},{"num":"Final","title":"CTA","body":"engagement prompt"}],"connection":"2-3 lines connecting all themes strategically.","future":[{"icon":"💡","text":"Post 2 idea"},{"icon":"🔥","text":"Post 3 idea"},{"icon":"🧠","text":"Post 4 idea"}],"authorName":"Tech Professional","authorHeadline":"${area}${specialty?' · '+specialty:''}"}`;
+{"article":"[PART1]\\n\\n[PART2]\\n\\n[PART3]\\n\\n[PART4]","keywords":["k1","k2","k3","k4","k5","k6"],"hashtags":["#h1","#h2","#h3","#h4","#h5","#h6","#h7"],"visual":"Visual cover concept in 3 sentences.","slides":[{"num":"Slide 1","title":"title","body":"hook"},{"num":"Slide 2","title":"title","body":"2 sentences"},{"num":"Slide 3","title":"title","body":"2 sentences"},{"num":"Slide 4","title":"title","body":"2 sentences"},{"num":"Slide 5","title":"title","body":"2 sentences"},{"num":"Final","title":"CTA","body":"prompt"}],"connection":"2-3 lines connecting themes.","future":[{"icon":"💡","text":"Post 2 idea"},{"icon":"🔥","text":"Post 3 idea"},{"icon":"🧠","text":"Post 4 idea"}],"authorName":"Tech Professional","authorHeadline":"${area}${specialty?' · '+specialty:''}"}`;
   }
   const n=seriesCount;
   return `You are a world-class LinkedIn content strategist. Create a ${n}-post series.
@@ -721,11 +817,44 @@ function sTab(i,btn){
   const d=generatedData,c=document.getElementById('tab-content');
   if(i===0){
     const wc=(d.article||'').split(/\s+/).filter(Boolean).length;
+    const canvaQuery=encodeURIComponent(`LinkedIn post cover ${d.authorHeadline||'tech professional'} modern pastel design`);
     c.innerHTML=`<div class="sec">${lang==='pt'?'Artigo para LinkedIn':'LinkedIn Article'}</div>
-    <div class="art-card"><div class="art-body" id="art-body">${esc(d.article||'')}</div>
-    <div class="art-footer"><span class="wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
-    <div style="display:flex;gap:8px"><button class="copy-btn" onclick="cp(this,'art-body')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
-    <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreview()">👁 Preview</button></div></div></div>`;
+    <div class="art-card">
+      <div class="art-body" id="art-body">${esc(d.article||'')}</div>
+      <div class="art-footer">
+        <span class="wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="copy-btn" onclick="cp(this,'art-body')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
+          <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreview()">👁 Preview</button>
+          <a class="btn-canva" href="https://www.canva.com/create/linkedin-banners/?query=${canvaQuery}" target="_blank">✦ Criar capa no Canva</a>
+        </div>
+      </div>
+    </div>
+    <div class="rewrite-panel">
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">↻ ${lang==='pt'?'Reescrever com outro estilo ou tom':'Rewrite with different style or tone'}</div>
+      <div class="rewrite-styles" id="rw-styles">
+        <span class="rw-chip on" onclick="selRw(this,'reflective-philosophical')">🪞 Reflexivo</span>
+        <span class="rw-chip" onclick="selRw(this,'direct-bold')">⚡ Direto</span>
+        <span class="rw-chip" onclick="selRw(this,'storytelling')">📖 Storytelling</span>
+        <span class="rw-chip" onclick="selRw(this,'ironic')">😏 Irônico</span>
+        <span class="rw-chip" onclick="selRw(this,'educational')">📚 Educacional</span>
+        <span class="rw-chip" onclick="selRw(this,'urgent')">⚡ Urgente</span>
+        <span class="rw-chip" onclick="selRw(this,'empathetic')">🤝 Empático</span>
+        <span class="rw-chip" onclick="selRw(this,'minimalist')">◾ Minimalista</span>
+        <span class="rw-chip" onclick="selRw(this,'provocative-contrarian')">🔥 Contrarian</span>
+      </div>
+      <button class="btn-rewrite" id="rw-btn" onclick="rewrite()">↻ ${lang==='pt'?'Gerar nova versão':'Generate new version'}</button>
+      <div id="rw-result" style="display:none;margin-top:1rem">
+        <div class="sec" style="margin-bottom:.75rem">${lang==='pt'?'Nova versão':'New version'}</div>
+        <div class="art-card">
+          <div class="art-body" id="rw-body"></div>
+          <div class="art-footer">
+            <span class="wc" id="rw-wc"></span>
+            <button class="copy-btn" onclick="cp(this,'rw-body')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
   }else if(i===1){
     c.innerHTML=`<div class="sec">Keywords</div><div class="kw-row" style="margin-bottom:1.25rem">${(d.keywords||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('')}</div>
     <div class="sec">Hashtags</div><div class="kw-row">${(d.hashtags||[]).map(h=>`<span class="ht">${esc(h)}</span>`).join('')}</div>`;
