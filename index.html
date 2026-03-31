@@ -695,15 +695,13 @@ function buildPrompt(){
   const angle=document.getElementById('angle').value.trim();
   const cloneText=cloneOn?document.getElementById('clone-text').value.trim():'';
   const outLang=lang==='pt'?'Brazilian Portuguese':'English';
-  const toneDesc=toneL.en[toneVal];
+  const toneDescFinal = toneDesc || 'Reflective and philosophical';
   const sDesc=styleDesc[selStyleVal]||styleDesc['reflective-philosophical'];
   const ctxStr=ctxSel.join(', ');
   const tagStr=tagSel.length?tagSel.join(', '):'not specified';
   const voiceInstr=cloneText.length>50
     ?`\n\nVOICE CLONING — CRITICAL: Analyze these writing samples and replicate the exact style:\n---\n${cloneText}\n---`
     :`\n\nWRITING STYLE: ${sDesc}`;
-
-  const toneDescFinal = toneDesc || 'Reflective and philosophical';
 
   if(mode==='single'){
     return `You are a LinkedIn content strategist for tech professionals. Output language: ${outLang}.
