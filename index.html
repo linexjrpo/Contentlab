@@ -672,14 +672,17 @@ async function generate(){
     return;
   }
 
+  // Sanitiza a chave removendo caracteres não-ASCII
+  const safeKey = apiKey.replace(/[^\x00-\x7F]/g, '').trim();
+
   try{
     const res=await fetch('/api/generate',{
       method:'POST',
       headers:{
-        'Content-Type':'application/json',
-        'x-user-api-key': apiKey
+        'Content-Type':'application/json'
       },
       body:JSON.stringify({
+        apiKey: safeKey,
         messages:[{role:'user',content:buildPrompt()}]
       })
     });
