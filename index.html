@@ -257,6 +257,19 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
   </div>
 </header>
 
+<!-- API KEY GROQ -->
+<div id="api-banner" style="background:#fff;border:1.5px solid rgba(124,58,237,0.2);border-radius:16px;padding:1rem 1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 12px rgba(0,0,0,0.07);display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <div style="font-size:22px">⚡</div>
+  <div style="flex:1;min-width:180px">
+    <div id="api-title" style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;margin-bottom:2px">Configure sua chave Groq</div>
+    <div style="font-size:12px;color:#57534e">Gratuito em <a href="https://console.groq.com/keys" target="_blank" style="color:#7c3aed;font-weight:600">console.groq.com/keys</a> — sem cartão</div>
+  </div>
+  <div id="api-input-row" style="display:flex;gap:8px;flex:2;min-width:240px">
+    <input type="password" id="api-key-input" placeholder="gsk_..." autocomplete="off" onkeydown="if(event.key==='Enter')saveKey()" style="flex:1;background:#f7f5f2;border:1px solid rgba(28,25,23,0.14);border-radius:10px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1c1917;outline:none">
+    <button onclick="saveKey()" style="padding:9px 18px;background:#7c3aed;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer">Salvar</button>
+  </div>
+</div>
+
 <div id="form-wrap">
 
   <!-- MODES -->
