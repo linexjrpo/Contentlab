@@ -116,6 +116,25 @@ select option{background:var(--white)}
 .size-btn{flex:1;padding:10px 8px;background:var(--bg);border:1.5px solid var(--brd);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .18s;text-align:center}
 .size-btn:hover{border-color:var(--lila2);color:var(--lila2);background:var(--lilabg)}
 .size-btn.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+/* EDITOR */
+.art-editor{width:100%;min-height:180px;background:var(--card);border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.9;color:var(--tx);resize:none;padding:0;white-space:pre-wrap}
+.editor-toolbar{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-top:1px solid var(--brd);margin-top:.75rem;flex-wrap:wrap;gap:8px}
+.editor-mode-btns{display:flex;gap:6px}
+.emode-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--brd2);background:var(--bg2);color:var(--t2);transition:all .18s}
+.emode-btn.on{background:var(--lilabg);border-color:var(--lila2);color:var(--lila2)}
+/* REVIEW */
+.review-panel{background:var(--sandg);border:1.5px solid rgba(217,119,6,.2);border-radius:14px;padding:1.25rem;margin-top:1rem}
+.review-item{background:var(--white);border:1px solid var(--brd);border-radius:10px;padding:1rem;margin-bottom:8px}
+.review-orig{font-size:13px;color:var(--peach2);text-decoration:line-through;margin-bottom:4px}
+.review-sugg{font-size:13px;color:var(--mint2);margin-bottom:6px}
+.review-reason{font-size:11px;color:var(--t3)}
+.btn-apply{padding:5px 12px;background:var(--mintbg);border:1px solid var(--mintbrd);border-radius:8px;font-size:11px;font-weight:700;color:var(--mint2);cursor:pointer;transition:all .18s}
+.btn-apply:hover{background:var(--mint2);color:#fff}
+/* DRAFT */
+.draft-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--lilabg);border:1.5px solid var(--lilabrd);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .18s}
+.draft-toggle:hover{border-color:var(--lila2)}
+.draft-toggle-lbl{font-size:13px;font-weight:600;color:var(--lila2)}
+.draft-toggle-sub{font-size:11px;color:var(--t3);margin-top:1px}
 /* REWRITE PANEL */
 .rewrite-panel{background:var(--bg2);border:1.5px dashed var(--brd2);border-radius:14px;padding:1.25rem;margin-top:1rem}
 .rewrite-styles{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
@@ -463,6 +482,22 @@ select option{background:var(--white)}
   </div>
 
   <div class="err" id="err"><span id="err-msg"></span></div>
+
+  <!-- OPTIONAL DRAFT -->
+  <div style="margin-bottom:1rem">
+    <div class="draft-toggle" onclick="toggleDraft()">
+      <input type="checkbox" id="draft-chk" onclick="event.stopPropagation()" style="width:15px;height:15px;accent-color:var(--lila2);flex-shrink:0">
+      <div>
+        <div class="draft-toggle-lbl">✏️ Escrever rascunho prévio <span style="font-size:10px;font-weight:400;opacity:.7">(opcional)</span></div>
+        <div class="draft-toggle-sub">Escreva com suas palavras o que quer abordar — a IA desenvolve baseada no seu rascunho</div>
+      </div>
+    </div>
+    <div id="draft-box" style="display:none">
+      <textarea id="draft-text" rows="4" placeholder="Ex: quero falar sobre como a IA militar no conflito Irã EUA me fez refletir sobre o papel do designer de produto. A gente cria ferramentas sem pensar nas consequências. Quero provocar minha rede a pensar nisso..." style="width:100%;background:var(--bg);border:1px solid var(--brd2);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--tx);outline:none;resize:none;line-height:1.7"></textarea>
+      <div style="font-size:11px;color:var(--t3);text-align:right;margin-top:3px"><span id="draft-chars">0</span> caracteres</div>
+    </div>
+  </div>
+
   <button class="btn-gen" id="gen-btn" onclick="generate()">
     <span>✦</span><span id="gen-lbl" data-pt="Gerar conteúdo completo" data-en="Generate full content">Gerar conteúdo completo</span>
   </button>
@@ -591,8 +626,124 @@ function selSize(el,size,instr){
   textSize=size;textSizeInstr=instr;
 }
 
-// REWRITE STYLE
-let rwStyle='reflective-philosophical';
+// EDITOR MODE
+function setEditorMode(mode){
+  const view=document.getElementById('art-view');
+  const editor=document.getElementById('art-editor');
+  const btnView=document.getElementById('btn-view');
+  const btnEdit=document.getElementById('btn-edit');
+  if(!view||!editor)return;
+  if(mode==='edit'){
+    editor.value=view.innerText;
+    view.style.display='none';
+    editor.style.display='block';
+    editor.focus();
+    btnView.classList.remove('on');btnEdit.classList.add('on');
+  }else{
+    view.innerText=editor.value;
+    editor.style.display='none';
+    view.style.display='block';
+    btnEdit.classList.remove('on');btnView.classList.add('on');
+    updWc();
+  }
+}
+function updWc(){
+  const editor=document.getElementById('art-editor');
+  const wcEl=document.getElementById('art-wc');
+  if(!editor||!wcEl)return;
+  const wc=editor.value.split(/\s+/).filter(Boolean).length;
+  wcEl.textContent=wc+' '+(lang==='pt'?'palavras':'words');
+}
+function cpEditor(){
+  const view=document.getElementById('art-view');
+  const editor=document.getElementById('art-editor');
+  const text=editor&&editor.style.display!=='none'?editor.value:(view?view.innerText:'');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=event.target;const o=btn.textContent;
+    btn.textContent='✓ '+(lang==='pt'?'Copiado!':'Copied!');
+    setTimeout(()=>btn.textContent=o,2000);
+  });
+}
+
+// REVIEW TEXT
+async function reviewText(){
+  const view=document.getElementById('art-view');
+  const editor=document.getElementById('art-editor');
+  const text=editor&&editor.style.display!=='none'?editor.value:(view?view.innerText:'');
+  if(!text)return;
+  const apiKey=localStorage.getItem('cl_api_key')||'';
+  if(!apiKey){showErr('Chave Groq não configurada.');return;}
+  const btn=document.getElementById('review-btn');
+  btn.textContent='🔍 '+(lang==='pt'?'Analisando...':'Analyzing...');
+  btn.disabled=true;
+  const reviewPrompt=`You are a LinkedIn writing coach for Brazilian tech professionals. Analyze this LinkedIn post and identify expressions that are:
+1. Too formal or generic (jargon, clichés, corporate speak)
+2. Tone that feels inauthentic or doesn't sound like a real person
+3. English expressions that would sound better in ${lang==='pt'?'Brazilian Portuguese':'English'}
+
+POST TO REVIEW:
+${text}
+
+Return ONLY a JSON array (no markdown):
+[{"original":"exact phrase from text","suggestion":"better alternative","reason":"brief explanation in ${lang==='pt'?'Portuguese':'English'}"}]
+
+If the text is already good, return an empty array: []
+Maximum 5 suggestions. Focus on the most impactful changes.`;
+  try{
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({apiKey:apiKey.replace(/[^\x00-\x7F]/g,'').trim(),messages:[{role:'user',content:reviewPrompt}]})
+    });
+    const data=await res.json();
+    if(!res.ok)throw new Error(data?.error||'Erro');
+    const raw=data?.content?.[0]?.text||'[]';
+    let clean=raw.replace(/```json|```/g,'').trim();
+    const s=clean.indexOf('['),e=clean.lastIndexOf(']');
+    if(s!==-1)clean=clean.slice(s,e+1);
+    const suggestions=JSON.parse(clean);
+    const panel=document.getElementById('review-panel');
+    const items=document.getElementById('review-items');
+    if(!suggestions.length){
+      items.innerHTML=`<div style="font-size:13px;color:var(--mint2);padding:.75rem;background:var(--mintbg);border-radius:8px">✓ ${lang==='pt'?'Texto está ótimo! Nenhuma sugestão de melhoria.':'Text looks great! No suggestions needed.'}</div>`;
+    }else{
+      items.innerHTML=suggestions.map((s,i)=>`
+        <div class="review-item">
+          <div class="review-orig">❌ "${esc(s.original)}"</div>
+          <div class="review-sugg">✓ "${esc(s.suggestion)}"</div>
+          <div class="review-reason">${esc(s.reason)}</div>
+          <button class="btn-apply" style="margin-top:8px" onclick="applyReview(${i},'${esc(s.original)}','${esc(s.suggestion)}')">Aplicar substituição</button>
+        </div>`).join('');
+    }
+    panel.style.display='block';
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){showErr('Erro na revisão: '+e.message);}
+  finally{btn.textContent='🔍 '+(lang==='pt'?'Revisar texto':'Review text');btn.disabled=false;}
+}
+
+function applyReview(idx,original,suggestion){
+  const view=document.getElementById('art-view');
+  const editor=document.getElementById('art-editor');
+  const orig=original.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  const sugg=suggestion.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  if(editor&&editor.style.display!=='none'){
+    editor.value=editor.value.replace(orig,sugg);
+  }else if(view){
+    view.innerText=view.innerText.replace(orig,sugg);
+    if(editor)editor.value=view.innerText;
+  }
+  const items=document.querySelectorAll('.review-item');
+  if(items[idx]){items[idx].style.opacity='.4';items[idx].querySelector('.btn-apply').textContent='✓ Aplicado';}
+}
+
+// DRAFT TOGGLE
+let draftOn=false;
+function toggleDraft(){
+  draftOn=!draftOn;
+  document.getElementById('draft-chk').checked=draftOn;
+  document.getElementById('draft-box').style.display=draftOn?'block':'none';
+}
+
 function selRw(el,style){
   document.querySelectorAll('.rw-chip').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');rwStyle=style;
@@ -665,6 +816,8 @@ function toggleClone(){
 document.addEventListener('DOMContentLoaded',()=>{
   const ta=document.getElementById('clone-text');
   if(ta)ta.addEventListener('input',()=>document.getElementById('clone-chars').textContent=ta.value.length);
+  const dt=document.getElementById('draft-text');
+  if(dt)dt.addEventListener('input',()=>document.getElementById('draft-chars').textContent=dt.value.length);
   initKey();
 });
 
@@ -694,6 +847,7 @@ function buildPrompt(){
   const specialty=document.getElementById('specialty').value.trim();
   const angle=document.getElementById('angle').value.trim();
   const cloneText=cloneOn?document.getElementById('clone-text').value.trim():'';
+  const draftText=draftOn?document.getElementById('draft-text').value.trim():'';
   const outLang=lang==='pt'?'Brazilian Portuguese':'English';
   const toneDescFinal = toneDesc || 'Reflective and philosophical';
   const sDesc=styleDesc[selStyleVal]||styleDesc['reflective-philosophical'];
@@ -702,11 +856,14 @@ function buildPrompt(){
   const voiceInstr=cloneText.length>50
     ?`\n\nVOICE CLONING — CRITICAL: Analyze these writing samples and replicate the exact style:\n---\n${cloneText}\n---`
     :`\n\nWRITING STYLE: ${sDesc}`;
+  const draftInstr=draftText.length>10
+    ?`\n\nUSER DRAFT — CRITICAL: The user wrote this rough draft in their own words. Base the article on these ideas, preserving their voice and perspective:\n---\n${draftText}\n---`
+    :'';
 
   if(mode==='single'){
     return `You are a LinkedIn content strategist for tech professionals. Output language: ${outLang}.
 USER: area=${area}, speciality=${specialty||'none'}, themes=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, angle=${angle||'none'}
-${voiceInstr}
+${voiceInstr}${draftInstr}
 
 TONE: ${toneDescFinal}
 SIZE: ${textSizeInstr}
@@ -816,20 +973,33 @@ function sTab(i,btn){
   if(i===0){
     const wc=(d.article||'').split(/\s+/).filter(Boolean).length;
     const canvaQuery=encodeURIComponent(`LinkedIn post cover ${d.authorHeadline||'tech professional'} modern pastel design`);
-    c.innerHTML=`<div class="sec">${lang==='pt'?'Artigo para LinkedIn':'LinkedIn Article'}</div>
+    c.innerHTML=`
+    <div class="sec">${lang==='pt'?'Artigo para LinkedIn':'LinkedIn Article'}</div>
     <div class="art-card">
-      <div class="art-body" id="art-body">${esc(d.article||'')}</div>
-      <div class="art-footer">
-        <span class="wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="copy-btn" onclick="cp(this,'art-body')">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
-          <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreview()">👁 Preview</button>
-          <a class="btn-canva" href="https://www.canva.com/create/linkedin-banners/?query=${canvaQuery}" target="_blank">✦ Criar capa no Canva</a>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div class="editor-mode-btns">
+          <button class="emode-btn on" id="btn-view" onclick="setEditorMode('view')">👁 ${lang==='pt'?'Visualizar':'View'}</button>
+          <button class="emode-btn" id="btn-edit" onclick="setEditorMode('edit')">✏️ ${lang==='pt'?'Editar':'Edit'}</button>
         </div>
+        <span class="wc" id="art-wc">${wc} ${lang==='pt'?'palavras':'words'}</span>
+      </div>
+      <div id="art-view" class="art-body">${esc(d.article||'')}</div>
+      <textarea id="art-editor" class="art-editor" style="display:none" oninput="updWc()">${d.article||''}</textarea>
+      <div class="editor-toolbar">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="copy-btn" onclick="cpEditor()">📋 ${lang==='pt'?'Copiar':'Copy'}</button>
+          <button class="copy-btn" style="color:var(--lila2);border-color:var(--lilabrd);background:var(--lilabg)" onclick="openPreview()">👁 Preview</button>
+          <a class="btn-canva" href="https://www.canva.com/create/linkedin-banners/?query=${canvaQuery}" target="_blank">✦ Canva</a>
+        </div>
+        <button class="copy-btn" id="review-btn" onclick="reviewText()" style="color:var(--sand2);border-color:rgba(217,119,6,.3);background:var(--sandbg)">🔍 ${lang==='pt'?'Revisar texto':'Review text'}</button>
       </div>
     </div>
+    <div id="review-panel" style="display:none" class="review-panel">
+      <div style="font-size:12px;font-weight:700;color:var(--sand2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">🔍 ${lang==='pt'?'Sugestões de revisão':'Review suggestions'}</div>
+      <div id="review-items"></div>
+    </div>
     <div class="rewrite-panel">
-      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">↻ ${lang==='pt'?'Reescrever com outro estilo ou tom':'Rewrite with different style or tone'}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">↻ ${lang==='pt'?'Reescrever com outro estilo':'Rewrite with different style'}</div>
       <div class="rewrite-styles" id="rw-styles">
         <span class="rw-chip on" onclick="selRw(this,'reflective-philosophical')">🪞 Reflexivo</span>
         <span class="rw-chip" onclick="selRw(this,'direct-bold')">⚡ Direto</span>
