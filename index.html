@@ -617,9 +617,11 @@ function buildPrompt(){
 USER: area=${area}, speciality=${specialty||'none'}, themes to cross=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, personal angle=${angle||'none'}
 ${voiceInstr}
 
+CRITICAL RULE: The "article" field MUST contain between 150 and 220 words. Count carefully before responding. Less than 150 words is NOT acceptable.
+
 Return ONLY this exact JSON structure, no extra text:
 {
-  "article": "150-220 word LinkedIn post. Hook in first line. Connect ${area} with ${ctxSel[0]||ctxStr}. End with a question. Use \\n\\n between paragraphs.",
+  "article": "MANDATORY 150-220 words. Strong hook first line. Use storytelling or professional insight. Connect ${area} with ${ctxSel[0]||ctxStr} in a creative and non-generic way. Include 3 to 4 paragraphs separated by \\n\\n. End with an engaging question that invites comments.",
   "keywords": ["kw1","kw2","kw3","kw4","kw5","kw6"],
   "hashtags": ["#tag1","#tag2","#tag3","#tag4","#tag5","#tag6","#tag7"],
   "visual": "Visual cover concept: format, colors, elements, typography in 3-4 sentences.",
