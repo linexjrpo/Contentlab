@@ -614,34 +614,19 @@ function buildPrompt(){
 
   if(mode==='single'){
     return `You are a LinkedIn content strategist for tech professionals. Output language: ${outLang}.
-USER: area=${area}, speciality=${specialty||'none'}, themes to cross=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, personal angle=${angle||'none'}
+USER: area=${area}, speciality=${specialty||'none'}, themes=${ctxStr}, tags=${tagStr}, goal=${selObjVal}, tone=${toneDesc}, angle=${angle||'none'}
 ${voiceInstr}
 
-CRITICAL RULE: The "article" field MUST contain between 150 and 220 words. Count carefully before responding. Less than 150 words is NOT acceptable.
+Write a LinkedIn article with EXACTLY these 4 parts separated by \\n\\n:
+PART 1 (hook - 2-3 sentences): A provocative or surprising opening statement connecting ${area} with ${ctxSel[0]||ctxStr}. Make the reader stop scrolling.
+PART 2 (context - 3-4 sentences): Explain the situation or problem in depth. Use a specific example or real scenario.
+PART 3 (insight - 3-4 sentences): Your professional insight or unique perspective. What most people miss. What you learned.
+PART 4 (question - 1-2 sentences): End with an open question that invites comments and discussion.
 
-Return ONLY this exact JSON structure, no extra text:
-{
-  "article": "MANDATORY 150-220 words. Strong hook first line. Use storytelling or professional insight. Connect ${area} with ${ctxSel[0]||ctxStr} in a creative and non-generic way. Include 3 to 4 paragraphs separated by \\n\\n. End with an engaging question that invites comments.",
-  "keywords": ["kw1","kw2","kw3","kw4","kw5","kw6"],
-  "hashtags": ["#tag1","#tag2","#tag3","#tag4","#tag5","#tag6","#tag7"],
-  "visual": "Visual cover concept: format, colors, elements, typography in 3-4 sentences.",
-  "slides": [
-    {"num":"Slide 1","title":"impactful title","body":"subtitle or hook"},
-    {"num":"Slide 2","title":"problem or context","body":"1-2 sentences"},
-    {"num":"Slide 3","title":"insight","body":"1-2 sentences"},
-    {"num":"Slide 4","title":"key twist","body":"1-2 sentences"},
-    {"num":"Slide 5","title":"reflection","body":"1-2 sentences"},
-    {"num":"Final","title":"call to action","body":"engagement prompt"}
-  ],
-  "connection": "2-3 lines on how the themes connect strategically.",
-  "future": [
-    {"icon":"💡","text":"Post 2: title and brief description"},
-    {"icon":"🔥","text":"Post 3: title and brief description"},
-    {"icon":"🧠","text":"Post 4: title and brief description"}
-  ],
-  "authorName": "Tech Professional",
-  "authorHeadline": "${area}${specialty?' · '+specialty:''}"
-}`;
+Each part must be substantial. Do not summarize or compress.
+
+Return ONLY this JSON (no markdown, no extra text):
+{"article":"[PART1]\\n\\n[PART2]\\n\\n[PART3]\\n\\n[PART4]","keywords":["k1","k2","k3","k4","k5","k6"],"hashtags":["#h1","#h2","#h3","#h4","#h5","#h6","#h7"],"visual":"Visual cover concept in 3 sentences: format, colors, key visual elements.","slides":[{"num":"Slide 1","title":"impactful title","body":"hook"},{"num":"Slide 2","title":"context","body":"2 sentences"},{"num":"Slide 3","title":"insight","body":"2 sentences"},{"num":"Slide 4","title":"twist","body":"2 sentences"},{"num":"Slide 5","title":"reflection","body":"2 sentences"},{"num":"Final","title":"CTA","body":"engagement prompt"}],"connection":"2-3 lines connecting all themes strategically.","future":[{"icon":"💡","text":"Post 2 idea"},{"icon":"🔥","text":"Post 3 idea"},{"icon":"🧠","text":"Post 4 idea"}],"authorName":"Tech Professional","authorHeadline":"${area}${specialty?' · '+specialty:''}"}`;
   }
   const n=seriesCount;
   return `You are a world-class LinkedIn content strategist. Create a ${n}-post series.
